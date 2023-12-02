@@ -3,19 +3,21 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using tp.Data;
 using tp.Models;
+using tp.Services;
 // the membership does not add in the customer as an attribute
 namespace tp.Controllers
 {
     public class CustomerController : Controller
     {
 
-
+        private readonly ICustomerService _customerService;
         private readonly ILogger<Movies> _logger;
         private readonly ApplicationDBContext _db;
-        public CustomerController(ApplicationDBContext db, ILogger<Movies> logger)
+        public CustomerController(ApplicationDBContext db, ILogger<Movies> logger, ICustomerService CustomerService)
         {
             _logger = logger;
             _db = db;
+            _customerService = CustomerService;
         }
 
         //********************************************   GET  CUSTOMERS    ******************************************************
@@ -23,7 +25,7 @@ namespace tp.Controllers
         {
 
 
-            var customers = _db.Customers.ToList();
+            var customers = _customerService.GetAllCustomers();
             return View(customers);
         }
    
@@ -82,9 +84,7 @@ namespace tp.Controllers
 
             _logger.LogInformation("valid model statae");
 
-            //c.Id = new Guid();
-            _db.Customers.Add(c);
-            _db.SaveChanges();
+            _customerService.AddCustomer(c);
 
             return RedirectToAction("Index");
         }

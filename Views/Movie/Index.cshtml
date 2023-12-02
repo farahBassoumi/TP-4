@@ -2,15 +2,12 @@
 @model List<tp.Models.Movies>
 
 <h2>MOVIES </h2>
-<!--
-@foreach (var item in Model)
-{
-    <p> id: @item.Id     |    name: @item.Name     |   genre name: @item.GenreName </p>
-    @Html.ActionLink(@item.Name, "Details", new { id = @item.Id});
-    @Html.ActionLink(@item.Name, "Edit", new { id = @item.Id})
-    ;
-}-->
-
+@*@{
+    Layout="~/Views/Shared/_Layout.cshtml";
+    }*@
+@{
+    ViewBag.Title = "Index";
+}
 
 
 <style>

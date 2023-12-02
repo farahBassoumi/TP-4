@@ -4,9 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Reflection.Metadata;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using tp.Data;
 using tp.Models;
+using tp.Services;
 
 namespace tp.Controllers
 {
@@ -14,10 +16,12 @@ namespace tp.Controllers
     {
         private readonly ILogger<Movies> _logger;
         private readonly ApplicationDBContext _db;
-        public MovieController(ApplicationDBContext db, ILogger<Movies> logger)
+        private readonly IMovieService _movieService;
+        public MovieController(ApplicationDBContext db, ILogger<Movies> logger, IMovieService MS)
         {
             _logger = logger;
             _db = db;
+            _movieService = MS;
         }
 
         public IActionResult Index()//get movies
@@ -229,7 +233,7 @@ namespace tp.Controllers
         public async Task<IActionResult> Details(Guid id)
         {
             var movie = await _db.movies
-                .Include(m => m.Customers) // Assuming you have a navigation property for Customers in your Movie model
+                .Include(m => m.Customers) 
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (movie == null)
@@ -240,9 +244,34 @@ namespace tp.Controllers
             return View(movie);
         }
 
+        //********************************************    get Movie By Genre   ******************************************************
 
-
+        public async Task<IActionResult> getMovieByGenre(Genres genre)
+        {
+            var movies = _movieService.GetMoviesByGenre(genre);
+            return RedirectToAction("Index", "Movie", movies);
 
         }
+
+
+        //********************************************    get Movie By Genre Id  ******************************************************
+
+        public async Task<IActionResult> getMovieByGenreId(Guid genreId)
+        {
+            var movies = _movieService.GetMoviesByGenreId(genreId);
+            return RedirectToAction("Index", "Movie", movies);
+
+        }
+
+        //********************************************    get ordered Movies   ******************************************************
+
+        public IActionResult GetOrderedMovies()
+        {
+            var orderedMovies = _movieService.GetMoviesOrderedByTitle().ToList();
+            return View(orderedMovies);
+        }
+
+
+    }
 
     }
